@@ -35,4 +35,13 @@ export const projects = [
     github: "#",
     demo: "#",
   },
+  {
+    title: "Gaara App",
+    category: "Web",
+    description:
+      "Aplicación web desplegada en Netlify con interfaz moderna y enfoque visual inspirado en Gaara.",
+    tech: ["React", "CSS", "Netlify"],
+    github: "#",
+    demo: "https://gaaraapp.netlify.app/",
+  },
 ];

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import ProjectCard from "./components/ProjectCard";
 import Footer from "./components/Footer";
@@ -10,6 +10,56 @@ const categories = ["Todos", "Full Stack", "Web", "Backend", "Datos"];
 function App() {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
 
+  useEffect(() => {
+    const cursor = document.querySelector(".gamer-cursor");
+    const reticle = document.querySelector(".cursor-reticle");
+
+    if (!cursor || !reticle) return undefined;
+
+    const moveCursor = (event) => {
+      const x = `${event.clientX}px`;
+      const y = `${event.clientY}px`;
+
+      cursor.style.left = x;
+      cursor.style.top = y;
+      reticle.style.left = x;
+      reticle.style.top = y;
+    };
+
+    const setHoverState = (event) => {
+      const isInteractive = event.target.closest("a, button");
+      document.body.classList.toggle("cursor-locked", Boolean(isInteractive));
+    };
+
+    window.addEventListener("pointermove", moveCursor);
+    document.addEventListener("mouseover", setHoverState);
+
+    return () => {
+      window.removeEventListener("pointermove", moveCursor);
+      document.removeEventListener("mouseover", setHoverState);
+    };
+  }, []);
+
+  useEffect(() => {
+    const revealItems = document.querySelectorAll(".reveal-on-scroll");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.16 }
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+
+    return () => observer.disconnect();
+  }, []);
+
   const filteredProjects =
     selectedCategory === "Todos"
       ? projects
@@ -17,15 +67,17 @@ function App() {
 
   return (
     <>
+      <div className="gamer-cursor" aria-hidden="true"></div>
+      <div className="cursor-reticle" aria-hidden="true"></div>
       <div className="grid-bg"></div>
-      <div className="orb orb-one"></div>
-      <div className="orb orb-two"></div>
+      <div className="arena-light arena-light-one"></div>
+      <div className="arena-light arena-light-two"></div>
 
       <Header />
 
       <main>
         <section id="inicio" className="hero">
-          <div className="hero-content">
+          <div className="hero-content entrance entrance-one">
             <span className="tag">SYSTEM ONLINE / PORTFOLIO MODE</span>
 
             <h1>
@@ -41,14 +93,16 @@ function App() {
 
             <div className="hero-buttons">
               <a href="#proyectos">Ver proyectos</a>
-              <a href="#contacto" className="secondary">Contactarme</a>
-              <a href="/cv-juan-gonzalez.pdf" download className="secondary">
+              <a href="#contacto" className="secondary">
+                Contactarme
+              </a>
+              <a href="/CV-ING%20JOSE_Z.pdf" download className="secondary">
                 Descargar CV
               </a>
             </div>
           </div>
 
-          <div className="hero-panel">
+          <div className="hero-panel entrance entrance-two">
             <div className="panel-header">
               <span></span>
               <span></span>
@@ -63,16 +117,32 @@ function App() {
               <p>{">"} PostgreSQL: OK</p>
               <p className="success">{">"} Sistema listo.</p>
             </div>
+
+            <div className="mouse-stage" aria-hidden="true">
+              <div className="mouse-cable"></div>
+              <div className="gaming-mouse">
+                <span className="mouse-left"></span>
+                <span className="mouse-right"></span>
+                <span className="mouse-wheel"></span>
+                <span className="mouse-logo"></span>
+                <span className="mouse-rgb-strip"></span>
+                <span className="mouse-side-button side-one"></span>
+                <span className="mouse-side-button side-two"></span>
+                <span className="mouse-grip left-grip"></span>
+                <span className="mouse-grip right-grip"></span>
+              </div>
+              <div className="mouse-pad-glow"></div>
+            </div>
           </div>
         </section>
 
         <section className="about-section">
-          <div>
+          <div className="reveal-on-scroll">
             <span className="section-tag">ABOUT_PLAYER</span>
             <h2>Sobre mí</h2>
           </div>
 
-          <p>
+          <p className="reveal-on-scroll delay-one">
             Soy estudiante de Ingeniería de Sistemas enfocado en crear software
             útil, ordenado y escalable. Me interesa el desarrollo full stack,
             las bases de datos, la inteligencia artificial, el análisis de datos
@@ -80,7 +150,7 @@ function App() {
           </p>
         </section>
 
-        <section className="skills-section">
+        <section className="skills-section reveal-on-scroll">
           <span className="section-tag">SKILL_TREE</span>
           <h2>Habilidades</h2>
 
@@ -96,35 +166,37 @@ function App() {
               "Power BI",
               "Git",
               "APIs REST",
-            ].map((skill) => (
-              <span key={skill}>{skill}</span>
+            ].map((skill, index) => (
+              <span key={skill} style={{ "--delay": `${index * 45}ms` }}>
+                {skill}
+              </span>
             ))}
           </div>
         </section>
 
-        <section className="stats-section">
-          <div className="stat-card">
+        <section className="stats-section reveal-on-scroll">
+          <div className="stat-card" style={{ "--delay": "0ms" }}>
             <strong>10+</strong>
             <span>Proyectos</span>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card" style={{ "--delay": "90ms" }}>
             <strong>4</strong>
             <span>Tecnologías fuertes</span>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card" style={{ "--delay": "180ms" }}>
             <strong>Full</strong>
             <span>Stack Mindset</span>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card" style={{ "--delay": "270ms" }}>
             <strong>24/7</strong>
             <span>Modo aprendizaje</span>
           </div>
         </section>
 
-        <section className="timeline-section">
+        <section className="timeline-section reveal-on-scroll">
           <span className="section-tag">PLAYER_HISTORY</span>
           <h2>Ruta de aprendizaje</h2>
 
@@ -175,7 +247,7 @@ function App() {
           </div>
         </section>
 
-        <section className="certificates-section">
+        <section className="certificates-section reveal-on-scroll">
           <span className="section-tag">ACHIEVEMENTS_UNLOCKED</span>
           <h2>Certificados</h2>
 
@@ -187,9 +259,13 @@ function App() {
               "JavaScript",
               "Big Data",
               "Inteligencia Artificial Básica",
-            ].map((certificate) => (
-              <div className="certificate-card" key={certificate}>
-                <span className="certificate-icon">◆</span>
+            ].map((certificate, index) => (
+              <div
+                className="certificate-card"
+                key={certificate}
+                style={{ "--delay": `${index * 70}ms` }}
+              >
+                <span className="certificate-icon"></span>
                 <h3>{certificate}</h3>
                 <p>Certificación de formación complementaria.</p>
               </div>
@@ -197,7 +273,7 @@ function App() {
           </div>
         </section>
 
-        <section id="proyectos" className="projects-section">
+        <section id="proyectos" className="projects-section reveal-on-scroll">
           <span className="section-tag">QUEST_LOG</span>
           <h2>Mis Proyectos</h2>
 
@@ -215,13 +291,13 @@ function App() {
 
           <div className="projects-grid">
             {filteredProjects.map((project, index) => (
-              <ProjectCard key={index} {...project} />
+              <ProjectCard key={project.title} index={index} {...project} />
             ))}
           </div>
         </section>
 
         <section className="contact-section" id="contacto">
-          <div className="contact-card">
+          <div className="contact-card reveal-on-scroll">
             <span className="section-tag">FINAL_STAGE</span>
 
             <h2>¿Construimos algo?</h2>
